@@ -1,0 +1,43 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasyAsync", "EasyAsync\EasyAsync.csproj", "{ECFA66F7-D2BF-4EB0-9873-7DDB718F65AC}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "License", "License", "{31C5D625-0D2D-47D4-B25D-BEDBA4448D41}"
+	ProjectSection(SolutionItems) = preProject
+		COPYING.LESSER.txt = COPYING.LESSER.txt
+		COPYING.txt = COPYING.txt
+		README = README
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasyAsync.Tests", "EasyAsync.Tests\EasyAsync.Tests.csproj", "{8586C7CE-8466-46E8-B8F3-21671519F71B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{D14CD4AA-F37C-486D-8085-ADE741D10F7B}"
+	ProjectSection(SolutionItems) = preProject
+		EasyAsync.vsmdi = EasyAsync.vsmdi
+		Local.testsettings = Local.testsettings
+		TraceAndTestImpact.testsettings = TraceAndTestImpact.testsettings
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(TestCaseManagementSettings) = postSolution
+		CategoryFile = EasyAsync.vsmdi
+	EndGlobalSection
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{ECFA66F7-D2BF-4EB0-9873-7DDB718F65AC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ECFA66F7-D2BF-4EB0-9873-7DDB718F65AC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ECFA66F7-D2BF-4EB0-9873-7DDB718F65AC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ECFA66F7-D2BF-4EB0-9873-7DDB718F65AC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8586C7CE-8466-46E8-B8F3-21671519F71B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8586C7CE-8466-46E8-B8F3-21671519F71B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8586C7CE-8466-46E8-B8F3-21671519F71B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8586C7CE-8466-46E8-B8F3-21671519F71B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

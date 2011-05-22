@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<definitions xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:tns="http://netservices.sapo.pt/definitions" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" targetNamespace="http://netservices.sapo.pt/definitions" xmlns="http://schemas.xmlsoap.org/wsdl/">
+  <types>
+    <xsd:schema elementFormDefault="qualified" targetNamespace="http://netservices.sapo.pt/definitions">
+      <xsd:element name="HasCoverage">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element minOccurs="0" maxOccurs="1" name="telephoneNumber" type="xsd:string" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="HasCoverageResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element minOccurs="0" maxOccurs="1" name="HasCoverageResult" type="xsd:boolean" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+    </xsd:schema>
+  </types>
+  <message name="HasCoverageSoapIn">
+    <part name="parameters" element="tns:HasCoverage" />
+  </message>
+  <message name="HasCoverageSoapOut">
+    <part name="parameters" element="tns:HasCoverageResponse" />
+  </message>
+  <message name="HasCoverageHttpGetIn">
+    <part name="parameters" element="tns:HasCoverage" />
+  </message>
+  <message name="HasCoverageHttpGetOut">
+    <part name="parameters" element="tns:HasCoverageResponse" />
+  </message>
+  <message name="HasCoverageHttpPostIn">
+    <part name="parameters" element="tns:HasCoverage" />
+  </message>
+  <message name="HasCoverageHttpPostOut">
+    <part name="parameters" element="tns:HasCoverageResponse" />
+  </message>
+  <portType name="ADSLSoap">
+    <operation name="HasCoverage">
+      <documentation>Verifica a cobertura ADSL dado um número de telefone.</documentation>
+      <input message="tns:HasCoverageSoapIn" />
+      <output message="tns:HasCoverageSoapOut" />
+    </operation>
+  </portType>
+  <portType name="ADSLHttpGet">
+    <operation name="HasCoverage">
+      <documentation>Verifica a cobertura ADSL dado um número de telefone.</documentation>
+      <input message="tns:HasCoverageHttpGetIn" />
+      <output message="tns:HasCoverageHttpGetOut" />
+    </operation>
+  </portType>
+  <portType name="ADSLHttpPost">
+    <operation name="HasCoverage">
+      <documentation>Verifica a cobertura ADSL dado um número de telefone.</documentation>
+      <input message="tns:HasCoverageHttpPostIn" />
+      <output message="tns:HasCoverageHttpPostOut" />
+    </operation>
+  </portType>
+  <binding name="ADSLSoap" type="tns:ADSLSoap">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <operation name="HasCoverage">
+      <soap:operation soapAction="http://netservices.sapo.pt/definitions/HasCoverage" style="document" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+  </binding>
+  <binding name="ADSLHttpGet" type="tns:ADSLHttpGet">
+    <http:binding verb="GET" />
+    <operation name="HasCoverage">
+      <http:operation location="/HasCoverage" />
+      <input>
+        <http:urlEncoded />
+      </input>
+      <output>
+        <mime:mimeXml part="Body" />
+      </output>
+    </operation>
+  </binding>
+  <binding name="ADSLHttpPost" type="tns:ADSLHttpPost">
+    <http:binding verb="POST" />
+    <operation name="HasCoverage">
+      <http:operation location="/HasCoverage" />
+      <input>
+        <mime:content part="Body" type="application/x-www-form-urlencoded" />
+      </input>
+      <output>
+        <mime:mimeXml part="Body" />
+      </output>
+    </operation>
+  </binding>
+  <service name="ADSL">
+    <documentation>Expõe métodos comuns relacionados com a cobertura e suporte ADSL. 
+
+A verificação da cobertura do serviço ADSL é feita através da inserção de um número de telefone fixo válido.</documentation>
+    <port name="ADSLSoap" binding="tns:ADSLSoap">
+      <soap:address location="http://services.sapo.pt/ADSL" />
+    </port>
+    <port name="ADSLHttpGet" binding="tns:ADSLHttpGet">
+      <http:address location="http://services.sapo.pt/ADSL" />
+    </port>
+    <port name="ADSLHttpPost" binding="tns:ADSLHttpPost">
+      <http:address location="http://services.sapo.pt/ADSL" />
+    </port>
+  </service>
+</definitions>
