@@ -14,16 +14,43 @@
 // 
 // 	You should have received a copy of the GNU General Public License
 // 	along with EasyAsync. If not, see <http://www.gnu.org/licenses/>.
+using System.Threading;
+
 namespace EasyAsync
 {
-	internal class AsyncIteratorAsyncResult : ExceptionAsyncResult
+	internal class ManagedWaitHandle : WaitHandle
 	{
-		public AsyncIteratorAsyncResult(object asyncState, IAsyncIteratorRunner runner)
-			: base(asyncState)
+		private readonly object _monitor = new object();
+		private bool _isSignaled;
+
+		public ManagedWaitHandle(bool isSignaled)
 		{
-			Runner = runner;
+			_isSignaled = isSignaled;
 		}
 
-		public IAsyncIteratorRunner Runner { get; private set; }
+		public override bool WaitOne()
+		{
+			lock (_monitor)
+			{
+				return _isSignaled || Monitor.Wait(_monitor);
+			}
+		}
+
+		public override bool WaitOne(int millisecondsTimeout, bool exitContext)
+		{
+			lock (_monitor)
+			{
+				return _isSignaled || Monitor.Wait(_monitor, millisecondsTimeout, exitContext);
+			}
+		}
+
+		public void Signal()
+		{
+			lock (_monitor)
+			{
+				_isSignaled = true;
+				Monitor.PulseAll(_monitor);
+			}
+		}
 	}
 }

@@ -19,29 +19,81 @@ using System.Threading;
 
 namespace EasyAsync
 {
-	internal class AsyncResult : IAsyncResult
+	/// <summary>
+	/// Implementation of <see cref="IAsyncResult"/> that does not rely on unmanaged resources.
+	/// </summary>
+	public class AsyncResult : IAsyncResult
 	{
+		/// <summary>
+		/// Initializes a new instance of the <see cref="ExceptionAsyncResult"/> class.
+		/// </summary>
+		/// <param name="asyncState">State of the async.</param>
 		public AsyncResult(object asyncState)
 		{
 			AsyncState = asyncState;
-			_waitHandle = new Lazy<ManualResetEvent>(() => new ManualResetEvent(IsCompleted));
 		}
 
+		/// <summary>
+		/// Signals the completion of the operation represented by this <see cref="ExceptionAsyncResult"/>.
+		/// </summary>
 		public void Complete()
 		{
 			IsCompleted = true;
-			if(_waitHandle.IsValueCreated)
+			if (_waitHandle != null)
 			{
-				_waitHandle.Value.Set();
+				_waitHandle.Signal();
 			}
 		}
 
-		private readonly Lazy<ManualResetEvent> _waitHandle;
+		private ManagedWaitHandle _waitHandle;
 
+		/// <summary>
+		/// Gets a <see cref="T:System.Threading.WaitHandle"/> that is used to wait for an asynchronous operation to complete.
+		/// </summary>
+		/// <value></value>
+		/// <returns>
+		/// A <see cref="T:System.Threading.WaitHandle"/> that is used to wait for an asynchronous operation to complete.
+		/// </returns>
+		public WaitHandle AsyncWaitHandle
+		{
+			get
+			{
+				if(_waitHandle == null)
+				{
+					var value = new ManagedWaitHandle(IsCompleted);
+					if(Interlocked.CompareExchange(ref _waitHandle, value, null) != null)
+					{
+						((IDisposable)value).Dispose();
+					}
+				}
+				
+				return _waitHandle;
+			}
+		}
+
+		/// <summary>
+		/// Gets a user-defined object that qualifies or contains information about an asynchronous operation.
+		/// </summary>
+		/// <value></value>
+		/// <returns>
+		/// A user-defined object that qualifies or contains information about an asynchronous operation.
+		/// </returns>
 		public object AsyncState { get; private set; }
-		public WaitHandle AsyncWaitHandle { get { return _waitHandle.Value; } }
+
+		/// <summary>
+		/// Gets a value that indicates whether the asynchronous operation completed synchronously.
+		/// </summary>
+		/// <value></value>
+		/// <returns>true if the asynchronous operation completed synchronously; otherwise, false.
+		/// </returns>
 		public bool CompletedSynchronously { get; set; }
-		public bool IsCompleted { get; set; }
-		public Exception Exception { get; set; }
+
+		/// <summary>
+		/// Gets a value that indicates whether the asynchronous operation has completed.
+		/// </summary>
+		/// <value></value>
+		/// <returns>true if the operation is complete; otherwise, false.
+		/// </returns>
+		public bool IsCompleted { get; private set; }
 	}
 }

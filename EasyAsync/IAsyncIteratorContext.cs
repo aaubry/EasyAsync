@@ -35,13 +35,19 @@ namespace EasyAsync
 		IAsyncResult LastAsyncResult { get; }
 
 		/// <summary>
-		/// Gets the state that was passed to <see cref="AsyncIterator.BeginRun"/>.
-		/// </summary>
-		object AsyncState { get; }
-
-		/// <summary>
 		/// Sets the result of the iterator.
 		/// </summary>
 		void SetResult(object result);
+	}
+
+	/// <summary>
+	/// Supports the implementation of asynchronous iterators with state.
+	/// </summary>
+	public interface IAsyncIteratorContext<out T> : IAsyncIteratorContext
+	{
+		/// <summary>
+		/// Gets the state that was passed to <see cref="AsyncIterator.BeginRun"/>.
+		/// </summary>
+		T AsyncState { get; }
 	}
 }

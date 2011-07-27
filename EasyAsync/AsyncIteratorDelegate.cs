@@ -14,16 +14,18 @@
 // 
 // 	You should have received a copy of the GNU General Public License
 // 	along with EasyAsync. If not, see <http://www.gnu.org/licenses/>.
+using System;
+using System.Collections.Generic;
+
 namespace EasyAsync
 {
-	internal class AsyncIteratorAsyncResult : ExceptionAsyncResult
-	{
-		public AsyncIteratorAsyncResult(object asyncState, IAsyncIteratorRunner runner)
-			: base(asyncState)
-		{
-			Runner = runner;
-		}
+	/// <summary>
+	/// Defines an asynchronous iterator.
+	/// </summary>
+	public delegate IEnumerable<IAsyncResult> AsyncIteratorDelegate<T>(IAsyncIteratorContext<T> context);
 
-		public IAsyncIteratorRunner Runner { get; private set; }
-	}
+	/// <summary>
+	/// Defines an asynchronous iterator.
+	/// </summary>
+	public delegate IEnumerable<IAsyncResult> AsyncIteratorDelegate(IAsyncIteratorContext context);
 }

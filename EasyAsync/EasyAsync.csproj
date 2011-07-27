@@ -10,9 +10,10 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>EasyAsync</RootNamespace>
     <AssemblyName>EasyAsync</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -33,14 +34,24 @@
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>bin\Release\EasyAsync.XML</DocumentationFile>
   </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>false</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>
+    </AssemblyOriginatorKeyFile>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AsyncIteratorDelegate.cs" />
     <Compile Include="AsyncResult.cs" />
     <Compile Include="AsyncIterator.cs" />
     <Compile Include="AsyncIteratorRunner.cs" />
+    <Compile Include="ExceptionAsyncResult.cs" />
     <Compile Include="IAsyncIteratorContext.cs" />
+    <Compile Include="ManagedWaitHandle.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="AsyncIteratorAsyncResult.cs" />
   </ItemGroup>

@@ -16,29 +16,39 @@
 // 	along with EasyAsync. If not, see <http://www.gnu.org/licenses/>.
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 
 namespace EasyAsync
 {
-	internal class AsyncIteratorRunner : IAsyncIteratorContext
+	internal interface IAsyncIteratorRunner
+	{
+		object EndRun(IAsyncResult result);
+	}
+
+	internal class AsyncIteratorRunner<T> : IAsyncIteratorRunner, IAsyncIteratorContext<T>
 	{
 		private IEnumerator<IAsyncResult> _state;
 		private AsyncCallback _callback;
-		private AsyncIteratorAsyncResult _result;
+		private readonly AsyncIteratorAsyncResult _result;
+		private readonly bool _wrapExceptions;
 
-		public AsyncIteratorRunner()
+		public AsyncIteratorRunner(T state, bool wrapExceptions)
 		{
+			_wrapExceptions = wrapExceptions;
+			_result = new AsyncIteratorAsyncResult(state, this);
 			Callback = ContinuationCallback;
 		}
 
-		public IAsyncResult BeginRun(IEnumerable<IAsyncResult> iterator, AsyncCallback callback, object state)
+		public IAsyncResult BeginRun(IEnumerable<IAsyncResult> iterator, AsyncCallback callback)
 		{
-			if (iterator == null) throw new ArgumentNullException("iterator");
+			if (iterator == null)
+			{
+				throw new ArgumentNullException("iterator");
+			}
 
 			_callback = callback;
 
 			_state = iterator.GetEnumerator();
-
-			_result = new AsyncIteratorAsyncResult(state, this);
 
 			bool hasNext;
 			try
@@ -61,22 +71,36 @@ namespace EasyAsync
 
 		public object EndRun(IAsyncResult result)
 		{
-			if(!ReferenceEquals(_result, result))
+			if (!ReferenceEquals(_result, result))
 			{
 				throw new ArgumentException("The IAsyncResult that was passed to EndRun() is not the one that was returned by BeginRun().", "result");
 			}
 
-			if(!_result.IsCompleted)
+			if (!_result.IsCompleted)
 			{
 				_result.AsyncWaitHandle.WaitOne();
 			}
-			
-			if(_result.Exception != null)
+
+			if (_result.Exception != null)
 			{
-				throw _result.Exception;
+				if (_wrapExceptions)
+				{
+					throw new ApplicationException("Exception in async iterator. See InnerException for details.", _result.Exception);
+				}
+				else
+				{
+					var stackTrace = typeof(Exception).GetField("_remoteStackTraceString",
+																 BindingFlags.Instance | BindingFlags.NonPublic);
+					if (stackTrace != null)
+					{
+						stackTrace.SetValue(_result.Exception, _result.Exception.StackTrace + "\n");
+					}
+
+					throw _result.Exception;
+				}
 			}
 
-			return _ireratorResult;
+			return _iteratorResult;
 		}
 
 		private void ContinuationCallback(IAsyncResult iar)
@@ -110,16 +134,16 @@ namespace EasyAsync
 			}
 		}
 
-		private object _ireratorResult;
+		private object _iteratorResult;
 
 		#region IAsyncIteratorContext members
 		public AsyncCallback Callback { get; private set; }
 		public IAsyncResult LastAsyncResult { get; private set; }
-		public object AsyncState { get { return _result.AsyncState; } }
+		public T AsyncState { get { return (T)_result.AsyncState; } }
 
 		public void SetResult(object result)
 		{
-			_ireratorResult = result;
+			_iteratorResult = result;
 		}
 		#endregion
 	}

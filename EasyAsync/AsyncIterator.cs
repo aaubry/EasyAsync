@@ -15,7 +15,6 @@
 // 	You should have received a copy of the GNU General Public License
 // 	along with EasyAsync. If not, see <http://www.gnu.org/licenses/>.
 using System;
-using System.Collections.Generic;
 
 namespace EasyAsync
 {
@@ -30,9 +29,36 @@ namespace EasyAsync
 		/// <param name="iterator">An iterator that executes asynchronous code.</param>
 		/// <param name="state">An object containing state information for this asynchronous execution.</param>
 		/// <returns></returns>
-		public static object Run(Func<IAsyncIteratorContext, IEnumerable<IAsyncResult>> iterator, object state = null)
+		public static object Run<T>(AsyncIteratorDelegate<T> iterator, T state = default(T))
 		{
 			return EndRun(BeginRun(iterator, null, state));
+		}
+
+		/// <summary>
+		/// Runs the specified iterator synchronously.
+		/// </summary>
+		/// <param name="iterator">An iterator that executes asynchronous code.</param>
+		/// <returns></returns>
+		public static object Run(AsyncIteratorDelegate iterator)
+		{
+			return EndRun(BeginRun(iterator, null));
+		}
+
+		/// <summary>
+		/// Runs the specified iterator asynchronously.
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="iterator">An iterator that executes asynchronous code.</param>
+		/// <param name="callback">An optional <see cref="AsyncCallback"/> delegate that will be invoked when the asynchronous code completes.</param>
+		/// <param name="state">An object containing state information for this asynchronous execution.</param>
+		/// <param name="wrapExceptions">if set to <c>true</c> exceptions will be wrapped into <see cref="ApplicationException"/>.</param>
+		/// <returns></returns>
+		public static IAsyncResult BeginRun<T>(AsyncIteratorDelegate<T> iterator, AsyncCallback callback = null, T state = default(T), bool wrapExceptions = false)
+		{
+			if (iterator == null) throw new ArgumentNullException("iterator");
+
+			var runner = new AsyncIteratorRunner<T>(state, wrapExceptions);
+			return runner.BeginRun(iterator(runner), callback);
 		}
 
 		/// <summary>
@@ -40,14 +66,11 @@ namespace EasyAsync
 		/// </summary>
 		/// <param name="iterator">An iterator that executes asynchronous code.</param>
 		/// <param name="callback">An optional <see cref="AsyncCallback"/> delegate that will be invoked when the asynchronous code completes.</param>
-		/// <param name="state">An object containing state information for this asynchronous execution.</param>
+		/// <param name="wrapExceptions">if set to <c>true</c> exceptions will be wrapped into <see cref="Exception"/>.</param>
 		/// <returns></returns>
-		public static IAsyncResult BeginRun(Func<IAsyncIteratorContext, IEnumerable<IAsyncResult>> iterator, AsyncCallback callback = null, object state = null)
+		public static IAsyncResult BeginRun(AsyncIteratorDelegate iterator, AsyncCallback callback = null, bool wrapExceptions = false)
 		{
-			if (iterator == null) throw new ArgumentNullException("iterator");
-
-			var runner = new AsyncIteratorRunner();
-			return runner.BeginRun(iterator(runner), callback, state);
+			return BeginRun<object>(c => iterator(c), callback, null, wrapExceptions);
 		}
 
 		/// <summary>

@@ -77,5 +77,31 @@ namespace EasyAsync.Tests
 		{
 			AsyncIterator.BeginRun(c => null);
 		}
+
+		[TestMethod]
+		public void YieldBreakWorks()
+		{
+			var isCompleted = false;
+			var result = AsyncIterator.BeginRun(YieldBreakWorksHelper, ctx => isCompleted = true);
+
+			AsyncIterator.EndRun(result);
+
+			Assert.IsTrue(result.IsCompleted, "The async result is not completed.");
+			Assert.IsFalse(result.CompletedSynchronously, "The async result did complete synchronously.");
+
+			Thread.Sleep(100);
+
+			Assert.IsTrue(isCompleted, "The async callback was not invoked.");
+		}
+
+		private IEnumerable<IAsyncResult> YieldBreakWorksHelper(IAsyncIteratorContext context)
+		{
+			foreach (var result in DoSomethingAsync(context))
+			{
+				yield return result;
+			}
+
+			yield break;
+		}
 	}
 }

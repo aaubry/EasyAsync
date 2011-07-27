@@ -14,16 +14,17 @@
 // 
 // 	You should have received a copy of the GNU General Public License
 // 	along with EasyAsync. If not, see <http://www.gnu.org/licenses/>.
+using System;
+
 namespace EasyAsync
 {
-	internal class AsyncIteratorAsyncResult : ExceptionAsyncResult
+	internal class ExceptionAsyncResult : AsyncResult
 	{
-		public AsyncIteratorAsyncResult(object asyncState, IAsyncIteratorRunner runner)
+		public ExceptionAsyncResult(object asyncState)
 			: base(asyncState)
 		{
-			Runner = runner;
 		}
 
-		public IAsyncIteratorRunner Runner { get; private set; }
+		public Exception Exception { get; set; }
 	}
 }
